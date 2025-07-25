@@ -4,17 +4,15 @@
   <title>Client Location Tracker</title>
 </head>
 <body>
-  <h2>🔍 Capturing Your Location & IP...</h2>
+  <h2>📍 Getting Your Location & IP...</h2>
 
   <script>
-    // ✅ Get public IP address
     async function getIP() {
       const res = await fetch('https://api.ipify.org?format=json');
       const data = await res.json();
       return data.ip;
     }
 
-    // ✅ Send data to Google Sheet via Apps Script
     function sendToSheet(ip, locationURL) {
       fetch('https://script.google.com/macros/s/AKfycbyNvtT5K6zDg286cQLo3G2V-7TeL4aQ6zH1PhGsOkXUIf8NsDJWOJnwy_3rbqYQ_NAZ/exec', {
         method: 'POST',
@@ -28,25 +26,23 @@
       })
       .then(res => res.text())
       .then(msg => {
-        console.log("✅ Response:", msg);
-        document.body.innerHTML = `<h3>✅ Location Sent Successfully!</h3>`;
+        console.log("✅ Server Response:", msg);
+        document.body.innerHTML = `<h3>✅ Location sent!</h3>`;
       })
       .catch(err => {
-        console.error("❌ Error:", err);
-        document.body.innerHTML = `<h3>❌ Error Sending Data!</h3>`;
+        console.error("❌ Fetch error:", err);
+        document.body.innerHTML = `<h3>❌ Failed to send location.</h3>`;
       });
     }
 
-    // ✅ Get location and send everything
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       const locationURL = `https://maps.google.com/?q=${lat},${lon}`;
-
       const ip = await getIP();
       sendToSheet(ip, locationURL);
     }, () => {
-      document.body.innerHTML = `<h3>❌ Location Permission Denied</h3>`;
+      document.body.innerHTML = `<h3>❌ Location permission denied.</h3>`;
     });
   </script>
 </body>
